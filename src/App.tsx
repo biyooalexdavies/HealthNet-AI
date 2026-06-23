@@ -79,7 +79,7 @@ export default function App() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="lg:hidden rounded-full hover:bg-slate-100 transition-colors h-9 w-9"
+                className="rounded-full hover:bg-slate-100 transition-colors h-9 w-9"
                 onClick={() => {
                   trigger('nudge');
                   setIsSidebarOpen(false);
@@ -155,22 +155,18 @@ export default function App() {
           className="h-16 sm:h-20 px-4 sm:px-6 md:px-10 flex items-center justify-between sticky top-0 z-40 bg-slate-50/20 backdrop-blur-sm lg:backdrop-blur-none"
         >
           <div className="flex items-center gap-3 sm:gap-4">
-            {(!isSidebarOpen || window.innerWidth < 1024) && (
-              <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    trigger('nudge');
-                    setIsSidebarOpen(true);
-                  }}
-                  aria-label="Open sidebar"
-                  className="rounded-full bg-white/50 backdrop-blur-md shadow-sm border border-white h-9 w-9 sm:h-11 sm:w-11"
-                >
-                  <Menu className="w-5 h-5" aria-hidden="true" />
-                </Button>
-              </motion.div>
-            )}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => {
+                  trigger('nudge');
+                  setIsSidebarOpen((prev) => !prev);
+                }}
+                aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                className="rounded-full bg-white/50 backdrop-blur-md shadow-sm border border-white h-9 w-9 sm:h-11 sm:w-11"
+              >
+                {isSidebarOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
+              </Button>
             <div className="flex items-center gap-2 sm:gap-3">
               <span className="hidden xs:inline-block text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">Network</span>
               <Badge
