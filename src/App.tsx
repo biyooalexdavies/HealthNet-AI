@@ -20,7 +20,7 @@ const SIDEBAR_ITEMS = [
 ];
 
 export default function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('chat');
   const { trigger } = useWebHaptics();
 
