@@ -18,7 +18,7 @@ describe('ChatInterface Component', () => {
     render(<ChatInterface />);
     
     expect(screen.getByRole('log', { name: /conversation history/i })).toBeInTheDocument();
-    expect(screen.getByText(/Hello! I’m HealthNet AI/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hello! I'm NurseAda/i)).toBeInTheDocument();
   });
 
   it('allows user to type a message but disables "Send" if empty', async () => {

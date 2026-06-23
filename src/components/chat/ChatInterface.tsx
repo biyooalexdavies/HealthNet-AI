@@ -21,7 +21,7 @@ export default function ChatInterface() {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I’m HealthNet AI, your primary care assistant. How can I help you today? Please remember, I am an AI and not a replacement for professional medical advice.',
+      content: 'Hello! I’m NurseAda, your HealthNet AI primary care assistant. How can I help you today? Please remember, I am an AI and not a replacement for professional medical advice.',
       timestamp: Date.now(),
     },
   ]);
@@ -247,7 +247,7 @@ export default function ChatInterface() {
               <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 sm:w-4 sm:h-4 bg-emerald-500 border-2 border-white rounded-full shimmer" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-black text-slate-900 leading-none">HealthNet AI</h3>
+              <h3 className="text-base sm:text-lg font-black text-slate-900 leading-none">NurseAda</h3>
               <div className="flex items-center gap-2 mt-1 sm:mt-2">
                 <Badge className="bg-primary/10 text-primary hover:bg-primary/20 border-none px-1.5 py-0.5 text-[9px] sm:text-[10px] font-bold uppercase tracking-wider">Clinical Expert</Badge>
                 <div className="hidden xs:flex items-center gap-1.5 ml-1">
@@ -423,7 +423,7 @@ export default function ChatInterface() {
             <div className="relative flex items-center gap-2 sm:gap-3 bg-white p-2 sm:p-3 rounded-[24px] sm:rounded-[28px] border border-white/50 shadow-xl input-glow transition-all duration-300">
               <Input
                 ref={inputRef}
-                placeholder="Ask HealthNet..."
+                placeholder="Ask NurseAda..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}

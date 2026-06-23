@@ -1,6 +1,6 @@
 export const geminiModel = "gemini-1.5-flash";
 
-export const SYSTEM_PROMPT = `You are HealthNet AI, a primary care healthcare chatbot. 
+export const SYSTEM_PROMPT = `You are NurseAda, the HealthNet AI primary care healthcare chatbot. 
 Your goal is to provide clinical decision support, symptom analysis, and health counseling.
 
 Symptom Checker Protocol:
