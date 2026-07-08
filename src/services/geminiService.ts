@@ -1,5 +1,10 @@
 export const geminiModel = "gemini-1.5-flash";
 
+const getApiKey = (): string => {
+  const processKey = typeof process !== 'undefined' && process.env ? process.env.GEMINI_API_KEY : undefined;
+  return processKey || import.meta.env.VITE_GEMINI_API_KEY || '';
+};
+
 export const SYSTEM_PROMPT = `You are NurseAda, the HealthNet AI primary care healthcare chatbot.
 Your goal is to provide clinical decision support, symptom analysis, and health counseling.
 
@@ -51,7 +56,7 @@ export async function getChatResponse(
   messages: { role: string; content: string }[],
   medicalContext?: string
 ) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getApiKey();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`;
 
   // Build the system prompt, injecting medical context if available
@@ -94,7 +99,7 @@ export async function getChatResponse(
 }
 
 export async function analyzeMedicalImage(base64Image: string, prompt: string) {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = getApiKey();
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`;
 
   // Extract pure base64 if it has data url scheme

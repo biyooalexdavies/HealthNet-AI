@@ -22,7 +22,7 @@ export default function ChatInterface() {
     {
       id: '1',
       role: 'assistant',
-      content: 'Hello! I’m NurseAda, your HealthNet AI primary care assistant. How can I help you today? Please remember, I am an AI and not a replacement for professional medical advice.',
+      content: "Hello! I'm NurseAda, your HealthNet AI primary care assistant. How can I help you today? Please remember, I am an AI and not a replacement for professional medical advice.",
       timestamp: Date.now(),
     },
   ]);
@@ -440,11 +440,13 @@ export default function ChatInterface() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 className="flex-1 bg-transparent border-none focus-visible:ring-0 text-slate-900 placeholder:text-slate-400 placeholder:font-medium h-10 sm:h-12 px-3 sm:px-5 text-sm sm:text-base"
                 disabled={isLoading}
+                aria-label="message input"
               />
               <Button
                 onClick={handleSend}
                 disabled={isLoading || !input.trim()}
                 className="h-10 sm:h-12 px-5 sm:px-8 rounded-xl sm:rounded-2xl bg-slate-900 hover:bg-black text-white font-black uppercase tracking-widest text-[9px] sm:text-[11px] btn-press shadow-lg shrink-0"
+                aria-label="send message"
               >
                 <span className="hidden xs:inline mr-2">Send</span> <Send className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
               </Button>
