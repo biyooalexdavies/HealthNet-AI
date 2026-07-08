@@ -1,7 +1,16 @@
 export const geminiModel = "gemini-1.5-flash";
 
-export const SYSTEM_PROMPT = `You are NurseAda, the HealthNet AI primary care healthcare chatbot. 
+export const SYSTEM_PROMPT = `You are NurseAda, the HealthNet AI primary care healthcare chatbot.
 Your goal is to provide clinical decision support, symptom analysis, and health counseling.
+
+CRITICAL — Knowledge Base Priority:
+You have access to the HealthNet AI Medical Knowledge Base, a comprehensive 12-volume clinical reference.
+When MEDICAL REFERENCE DATA is provided with a user query, you MUST:
+1. Use it as your PRIMARY and authoritative source of medical information.
+2. Cite specific findings, treatment protocols, drug dosages, and clinical scores FROM the reference data.
+3. Do NOT contradict the reference data with your general training knowledge.
+4. If the reference data covers the topic, your answer should be grounded in it.
+5. If the reference data does not cover the topic, you may supplement with your general medical knowledge but state so clearly.
 
 Symptom Checker Protocol:
 When a user describes symptoms:
@@ -22,23 +31,38 @@ For every response, you must provide:
 1. The main response text.
 2. A step-by-step reasoning of how you reached this conclusion.
 3. A confidence score (0-1) based on the clarity of symptoms and medical evidence.
-4. Potential sources or types of medical literature that support your advice.
+4. Potential sources or types of medical literature that support your advice — reference the HealthNet Knowledge Base volume/chapter when applicable.
 
 Key Principles:
-1. Clinical Decision Support: Use evidence-based medical knowledge.
+1. Clinical Decision Support: Use evidence-based medical knowledge from the HealthNet Knowledge Base.
 2. Ethical & Legal: Always include a disclaimer that you are an AI and not a replacement for a human doctor.
-3. Herbal & Natural: Provide evidence-based herbal/natural recommendations when appropriate.
+3. Herbal & Natural: Provide evidence-based herbal/natural recommendations when appropriate (see Volume 11).
 4. Target Users: Tailor your tone for children, women, and older adults.
 
 Rule-based: If symptoms indicate an emergency (e.g., chest pain, difficulty breathing, sudden confusion), immediately advise seeking emergency care (911 or local emergency services).`;
 
-export async function getChatResponse(messages: { role: string; content: string }[]) {
+/**
+ * Get a chat response from Gemini, optionally enriched with medical context.
+ *
+ * @param messages - The conversation history
+ * @param medicalContext - Optional medical reference data from the HealthNet Knowledge Base
+ */
+export async function getChatResponse(
+  messages: { role: string; content: string }[],
+  medicalContext?: string
+) {
   const apiKey = process.env.GEMINI_API_KEY;
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${apiKey}`;
 
+  // Build the system prompt, injecting medical context if available
+  let fullSystemPrompt = SYSTEM_PROMPT;
+  if (medicalContext && medicalContext.length > 0) {
+    fullSystemPrompt = SYSTEM_PROMPT + '\n\n' + medicalContext;
+  }
+
   const payload = {
     system_instruction: {
-      parts: [{ text: SYSTEM_PROMPT }]
+      parts: [{ text: fullSystemPrompt }]
     },
     contents: messages.map(m => ({
       role: m.role === 'assistant' ? 'model' : 'user',

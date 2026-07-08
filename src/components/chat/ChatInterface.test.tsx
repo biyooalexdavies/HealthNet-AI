@@ -9,6 +9,12 @@ vi.mock('@/src/services/geminiService', () => ({
   getChatResponse: vi.fn(),
 }));
 
+// Mock the medical data service so we don't load the 12 volume markdown files during tests
+vi.mock('@/src/services/medicalDataService', () => ({
+  searchMedicalData: vi.fn().mockReturnValue([]),
+  formatContextForLLM: vi.fn().mockReturnValue(''),
+}));
+
 describe('ChatInterface Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -79,7 +85,8 @@ describe('ChatInterface Component', () => {
     expect(geminiService.getChatResponse).toHaveBeenCalledWith(
       expect.arrayContaining([
         expect.objectContaining({ content: 'I have a fever' })
-      ])
+      ]),
+      expect.any(String) // medicalContext parameter
     );
   });
 });

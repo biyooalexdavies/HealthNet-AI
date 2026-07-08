@@ -12,6 +12,7 @@ import { Message, DiagnosisResult } from '@/src/types';
 import { getChatResponse } from '@/src/services/geminiService';
 import { supabaseService } from '@/src/services/supabaseService';
 import { predict, extractSymptoms, adjust, KnowledgeBase, setKnowledgeBase } from '@/src/services/medicalEngine';
+import { searchMedicalData, formatContextForLLM } from '@/src/services/medicalDataService';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 
 export default function ChatInterface() {
@@ -106,6 +107,10 @@ export default function ChatInterface() {
     supabaseService.saveMessage('main-session', userMessage).catch(console.error);
 
     try {
+      // 0. SEARCH MEDICAL KNOWLEDGE BASE (RAG step)
+      const medicalResults = searchMedicalData(input, 3);
+      const medicalContext = formatContextForLLM(medicalResults);
+
       // 1. LOCAL PREDICTION (Predict Step)
       const detectedSymptoms = extractSymptoms(input);
       const localResults = predict(detectedSymptoms);
@@ -113,8 +118,9 @@ export default function ChatInterface() {
       let assistantMessage: Message;
 
       if (localResults.length > 0 && localResults[0].confidence > 0.6) {
-        // High confidence local prediction
+        // High confidence local prediction — enrich with KB context
         const topResult = localResults[0];
+        const kbSources = medicalResults.map(r => `${r.section.volume}: ${r.section.title}`).filter(Boolean);
         assistantMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
@@ -122,8 +128,9 @@ export default function ChatInterface() {
           timestamp: Date.now(),
           type: 'diagnosis',
           reasoning: {
-            steps: [`Detected symptoms: ${detectedSymptoms.join(', ')}`, `Weighted matching against knowledge base`, topResult.explanation],
+            steps: [`Detected symptoms: ${detectedSymptoms.join(', ')}`, `Weighted matching against knowledge base (${Object.keys(localResults).length} conditions evaluated)`, topResult.explanation],
             confidence: topResult.confidence,
+            sources: kbSources.length > 0 ? kbSources : ['HealthNet AI Internal Knowledge Base'],
           },
           metadata: { local: true, symptoms: detectedSymptoms, topResult }
         };
@@ -131,22 +138,26 @@ export default function ChatInterface() {
         // Setup for Feedback (Compare & Adjust)
         setPendingFeedback({ symptoms: detectedSymptoms, diagnoses: localResults, topPrediction: topResult.condition });
       } else {
-        // Fallback to Gemini if local confidence is low
+        // Fallback to Gemini — inject medical data context for grounded responses
         const chatHistory = messages.map((m) => ({
           role: m.role,
           content: m.content,
         }));
         chatHistory.push({ role: 'user', content: input });
 
-        const responseData = await getChatResponse(chatHistory);
+        const responseData = await getChatResponse(chatHistory, medicalContext);
 
+        const kbSources = medicalResults.map(r => `${r.section.volume}: ${r.section.title}`).filter(Boolean);
         assistantMessage = {
           id: (Date.now() + 1).toString(),
           role: 'assistant',
           content: responseData.content || 'I’m sorry, I couldn’t process that request.',
           timestamp: Date.now(),
-          reasoning: responseData.reasoning,
-          metadata: { local: false }
+          reasoning: responseData.reasoning ? {
+            ...responseData.reasoning,
+            sources: [...(responseData.reasoning.sources || []), ...kbSources],
+          } : undefined,
+          metadata: { local: false, medicalContextUsed: medicalResults.length > 0 }
         };
       }
 
