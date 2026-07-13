@@ -105,7 +105,7 @@ export default function HerbalGuide() {
           <Input
             id="herbal-search"
             name="herbal-search"
-            placeholder="Search remedies or symptoms..."
+            type="search" inputMode="search" placeholder="Search remedies or symptoms?"
             className="pl-12 bg-white/60 backdrop-blur-md border border-white/50 shadow-glass h-12 sm:h-14 rounded-2xl sm:rounded-[24px] focus-visible:ring-4 focus-visible:ring-primary/10 transition-all text-sm font-bold placeholder:text-slate-400"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -122,19 +122,19 @@ export default function HerbalGuide() {
           {[null, ...categories].map((cat) => {
             const isSelected = selectedCategory === cat;
             return (
-              <button
+              <button type="button"
                 key={cat || 'all'}
                 onClick={() => {
                   trigger('nudge');
                   setSelectedCategory(cat);
                 }}
-                className={`relative px-5 py-2.5 rounded-[14px] text-xs sm:text-[13px] font-black uppercase tracking-widest transition-all duration-300 z-10 active:scale-95 whitespace-nowrap ${
+                className={`relative min-h-11 px-5 py-2.5 rounded-[14px] text-xs sm:text-[13px] font-black uppercase tracking-widest transition-[color,background-color,box-shadow,transform] duration-300 z-10 active:scale-95 whitespace-nowrap ${
                   isSelected ? 'text-primary' : 'text-slate-500 hover:text-slate-700'
                 }`}
                 aria-pressed={isSelected}
               >
                 <span className="relative z-20 flex items-center gap-2">
-                  {!cat && <Sparkles className={`w-3 h-3 ${isSelected ? 'text-primary' : 'text-slate-400'}`} />}
+                  {!cat && <Sparkles className={`w-3 h-3 ${isSelected ? 'text-primary' : 'text-slate-400'}`} aria-hidden="true" />}
                   {cat || 'All Remedies'}
                 </span>
                 

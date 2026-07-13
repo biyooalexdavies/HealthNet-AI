@@ -86,9 +86,9 @@ export default function ImagingAnalysis() {
                     alt="Uploaded medical image"
                     className="w-full h-full object-contain rounded-xl"
                   />
-                  <button
+                  <button type="button"
                     onClick={handleClearImage}
-                    className="absolute top-2 right-2 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-red-50 transition-all duration-200 group-hover:scale-110 active:scale-90 border border-slate-100"
+                    className="absolute top-2 right-2 min-h-11 min-w-11 bg-white/90 backdrop-blur-sm rounded-full p-2 shadow-lg hover:bg-red-50 transition-[color,background-color,transform,box-shadow] duration-200 group-hover:scale-110 active:scale-90 border border-slate-100"
                     aria-label="Remove image"
                   >
                     <X className="w-4 h-4 text-slate-600" aria-hidden="true" />
@@ -107,11 +107,11 @@ export default function ImagingAnalysis() {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">Upload medical image</p>
-                    <p className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest leading-none">X-ray, MRI, or Photo</p>
+                    <p id="medical-image-help" className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1 uppercase tracking-widest leading-none">X-ray, MRI, or Photo</p>
                   </div>
                   <label
                     htmlFor="medical-image-input"
-                    className="mt-2 inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-widest text-primary hover:text-primary-foreground hover:bg-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-primary/20 hover:border-primary transition-all duration-200 cursor-pointer shadow-sm active:scale-95"
+                    className="mt-2 inline-flex min-h-11 items-center gap-1.5 text-[10px] sm:text-xs font-black uppercase tracking-widest text-primary hover:text-primary-foreground hover:bg-primary px-4 sm:px-6 py-2 sm:py-2.5 rounded-full border border-primary/20 hover:border-primary transition-[color,background-color,border-color,transform] duration-200 cursor-pointer shadow-sm active:scale-95"
                   >
                     Choose file
                   </label>
@@ -126,7 +126,7 @@ export default function ImagingAnalysis() {
               className={image ? 'hidden' : 'absolute inset-0 opacity-0 cursor-pointer'}
               onChange={handleImageUpload}
               accept="image/*"
-              aria-label="Upload medical image"
+              aria-label="Upload medical image" aria-describedby="medical-image-help"
             />
           </div>
 
@@ -162,7 +162,7 @@ export default function ImagingAnalysis() {
           </CardTitle>
         </CardHeader>
         <CardContent className="flex-1 overflow-hidden p-6 sm:p-8 pt-0">
-          <ScrollArea className="h-[300px] sm:h-[400px] pr-4">
+          <ScrollArea className="h-[300px] sm:h-[400px] pr-4" aria-live="polite" aria-label="Clinical insights">
             <AnimatePresence mode="wait">
               {analysis ? (
                 <motion.div

@@ -93,6 +93,7 @@
   html {
     @apply font-sans antialiased;
     scroll-behavior: smooth;
+    color-scheme: light;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -107,6 +108,15 @@
 
   .tabular-nums {
     font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-primary);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    color: var(--color-on-primary-container);
   }
 }
 
@@ -201,6 +211,37 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  .skip-link {
+    position: fixed;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 100;
+    transform: translateY(-150%);
+    border-radius: 0.75rem;
+    background: var(--color-primary);
+    color: var(--color-on-primary);
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    transition: transform var(--duration-fast) var(--ease-out-expo);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-contrast: more) {
+  .glass-panel {
+    background-color: var(--color-surface-container-lowest);
+    border-color: var(--color-outline);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
   }
 }
 

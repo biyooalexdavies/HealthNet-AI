@@ -282,6 +282,8 @@ export default function ChatInterface() {
               role="log"
               aria-label="Conversation history"
               aria-live="polite"
+              aria-relevant="additions text"
+              aria-atomic="false"
               className="space-y-6 sm:space-y-8"
             >
               <AnimatePresence initial={false}>
@@ -309,12 +311,12 @@ export default function ChatInterface() {
                         >
                           {m.content}
                           {m.reasoning && (
-                            <button
+                            <button type="button" aria-label="View clinical reasoning"
                               onClick={() => {
                                 trigger('nudge');
                                 setSelectedReasoning(m);
                               }}
-                              className="absolute -right-2 -bottom-2 sm:-right-3 sm:-bottom-3 bg-white border border-slate-100 shadow-xl rounded-2xl p-1.5 sm:p-2 text-primary hover:bg-primary hover:text-white transition-all transform hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100"
+                              className="absolute -right-2 -bottom-2 sm:-right-3 sm:-bottom-3 bg-white border border-slate-100 shadow-xl rounded-2xl p-1.5 sm:p-2 text-primary hover:bg-primary hover:text-white transition-[color,background-color,transform,opacity] duration-200 hover:scale-110 active:scale-95 opacity-0 group-hover:opacity-100 focus-visible:opacity-100"
                             >
                               <BrainCircuit className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             </button>
@@ -374,7 +376,7 @@ export default function ChatInterface() {
                           ) : (
                             <div className="flex gap-2 items-center">
                               <Input
-                                placeholder="Type the actual condition..."
+                                id="actual-condition" name="actual-condition" autoComplete="off" placeholder="Type the actual condition?"
                                 value={customConditionInput}
                                 onChange={(e) => setCustomConditionInput(e.target.value)}
                                 onKeyDown={(e) => {
@@ -432,9 +434,9 @@ export default function ChatInterface() {
           <div className="relative group max-w-4xl mx-auto">
             <div className="absolute -inset-1 bg-gradient-to-r from-primary/20 to-emerald-500/20 rounded-[28px] sm:rounded-[32px] blur opacity-0 group-focus-within:opacity-100 transition duration-500" />
             <div className="relative flex items-center gap-2 sm:gap-3 bg-white p-2 sm:p-3 rounded-[24px] sm:rounded-[28px] border border-white/50 shadow-xl input-glow transition-all duration-300">
-              <Input
+              <Input id="chat-message" name="message" autoComplete="off"
                 ref={inputRef}
-                placeholder="Ask NurseAda..."
+                placeholder="Ask NurseAda?"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}

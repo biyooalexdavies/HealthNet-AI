@@ -26,6 +26,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex font-sans text-slate-900 relative overflow-hidden selection:bg-primary/10">
+      <a className="skip-link" href="#main-content">Skip to main content</a>
       {/* Dynamic ambient background blobs - refined colors and blur */}
       <div className="absolute top-[-10%] left-[-5%] w-[60%] h-[60%] bg-primary/5 rounded-full blur-[140px] pointer-events-none" aria-hidden="true" />
       <div className="absolute bottom-[-10%] right-[-5%] w-[70%] h-[70%] bg-emerald-500/5 rounded-full blur-[160px] pointer-events-none" aria-hidden="true" />
@@ -33,16 +34,15 @@ export default function App() {
       {/* Mobile backdrop overlay */}
       <AnimatePresence>
         {isSidebarOpen && (
-          <motion.div
+          <motion.button
             key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
             className="fixed inset-0 z-40 bg-slate-900/10 backdrop-blur-sm lg:hidden"
-            aria-hidden="true"
-            role="button"
-            tabIndex={-1}
+            type="button"
+            aria-label="Close sidebar"
             onClick={() => {
               trigger('nudge');
               setIsSidebarOpen(false);
@@ -59,7 +59,7 @@ export default function App() {
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -320, opacity: 0 }}
             transition={SPRING}
-            aria-label="Application sidebar"
+            id="app-sidebar" aria-label="Application sidebar"
             className="w-[280px] sm:w-72 glass-panel flex flex-col z-50 fixed inset-y-0 lg:relative overflow-hidden m-2 sm:m-4 rounded-[24px] sm:rounded-3xl shadow-2xl lg:shadow-glass"
           >
             {/* Logo Section */}
@@ -115,7 +115,7 @@ export default function App() {
 
             {/* User profile section - elevated glass look */}
             <div className="p-4 sm:p-6 mt-auto">
-              <div className="bg-white/40 border border-white/50 rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-sm group hover:bg-white/60 transition-colors duration-200 cursor-pointer">
+              <div className="bg-white/40 border border-white/50 rounded-2xl p-3 sm:p-4 flex items-center gap-3 shadow-sm group hover:bg-white/60 transition-colors duration-200">
                 <div className="relative">
                   <Avatar className="w-9 h-9 sm:w-11 sm:h-11 border-2 border-white shadow-sm shrink-0 ring-2 ring-emerald-500/20">
                     <AvatarImage
@@ -127,7 +127,7 @@ export default function App() {
                     />
                     <AvatarFallback aria-hidden="true">JD</AvatarFallback>
                   </Avatar>
-                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shimmer" />
+                  <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full shimmer" aria-hidden="true" />
                 </div>
                 <div className="flex-1 min-w-0 overflow-hidden">
                   <p className="text-xs sm:text-sm font-bold text-slate-900 truncate">Jane Doe</p>
@@ -148,7 +148,7 @@ export default function App() {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative" role="main">
+      <main id="main-content" tabIndex={-1} className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         {/* Header - responsive spacing and elements */}
         <header
           role="banner"
@@ -163,6 +163,7 @@ export default function App() {
                   setIsSidebarOpen((prev) => !prev);
                 }}
                 aria-label={isSidebarOpen ? 'Close sidebar' : 'Open sidebar'}
+                aria-controls="app-sidebar" aria-expanded={isSidebarOpen}
                 className="rounded-full bg-white/50 backdrop-blur-md shadow-sm border border-white h-9 w-9 sm:h-11 sm:w-11"
               >
                 {isSidebarOpen ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
@@ -201,7 +202,7 @@ export default function App() {
         {/* Content Area - scrollable with responsive padding */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 md:px-10 pb-10 max-w-[1600px] mx-auto w-full">
           <Tabs 
-            defaultValue="chat" 
+            value={activeTab}
             className="space-y-6 sm:space-y-8" 
             onValueChange={(val) => {
               trigger('nudge');
@@ -228,7 +229,7 @@ export default function App() {
               </div>
               
               <div className="relative">
-                <TabsList className="bg-slate-200/40 p-1.5 h-auto rounded-[20px] gap-1 backdrop-blur-md overflow-x-auto no-scrollbar max-w-full justify-start sm:justify-center border border-white/50 shadow-inner relative">
+                <TabsList aria-label="Health tools" className="bg-slate-200/40 p-1.5 h-auto rounded-[20px] gap-1 backdrop-blur-md overflow-x-auto no-scrollbar max-w-full justify-start sm:justify-center border border-white/50 shadow-inner relative">
                   {[
                     { value: 'chat', icon: MessageSquare, label: 'Chat' },
                     { value: 'dashboard', icon: Activity, label: 'Vitals' },
@@ -240,7 +241,7 @@ export default function App() {
                       <TabsTrigger
                         key={tab.value}
                         value={tab.value}
-                        className="relative z-10 rounded-[14px] px-4 sm:px-6 py-2.5 sm:py-3 gap-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-transparent data-[state=active]:text-primary transition-all duration-300 group overflow-hidden"
+                        className="relative z-10 min-h-11 rounded-[14px] px-4 sm:px-6 py-2.5 sm:py-3 gap-2.5 text-xs sm:text-sm font-bold data-[state=active]:bg-transparent data-[state=active]:text-primary transition-[color,background-color,box-shadow] duration-300 group overflow-hidden"
                       >
                         <motion.div
                           whileTap={{ scale: 0.94 }}
@@ -264,7 +265,7 @@ export default function App() {
               </div>
             </div>
 
-            <TabsContent value="chat" className="mt-0 focus-visible:outline-none">
+            <TabsContent value="chat" className="mt-0">
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
                 <motion.div 
                   initial={{ opacity: 0, scale: 0.98 }}
@@ -313,15 +314,15 @@ export default function App() {
               </div>
             </TabsContent>
 
-            <TabsContent value="dashboard" className="mt-0 focus-visible:outline-none">
+            <TabsContent value="dashboard" className="mt-0">
               <PatientDashboard />
             </TabsContent>
 
-            <TabsContent value="imaging" className="mt-0 focus-visible:outline-none">
+            <TabsContent value="imaging" className="mt-0">
               <ImagingAnalysis />
             </TabsContent>
 
-            <TabsContent value="herbal" className="mt-0 focus-visible:outline-none">
+            <TabsContent value="herbal" className="mt-0">
               <HerbalGuide />
             </TabsContent>
           </Tabs>
